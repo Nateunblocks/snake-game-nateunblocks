@@ -40,12 +40,64 @@
     </script>
 </body>
 
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .area {
+            width: 100vw; /* Set the width to the full viewport width */
+            height: 100vh; /* Set the height to the full viewport height */
+            position: relative;
+            overflow: hidden; /* Hide overflow to prevent scrollbars */
+        }
+
+        /* Designing of a part of snake (here circle) */
+        .area .snake {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 25px;
+            height: 25px;
+            background: rgb(3, 171, 15);
+            border: 2px solid black;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="area">
+        <!-- You can add more divs for a long snake-->
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+    </div>
+
+    <!-- GSAP Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/gsap.min.js"></script>
+
+    <!-- JavaScript Code for mouse event -->
+    <script>
+        document.body.addEventListener("mousemove", e => {
+            gsap.to(".snake", {
+                x: e.clientX,
+                y: e.clientY,
+                stagger: -0.05,
+            });
+        });
+    </script>
+</body>
+
 </html>
-<style>
-    .area {
-     width:  25px;
-     height: 25px;
-     position: relative;
+
     }
     /* Designing of a part of snake (here circle) */
      .area .snake {
