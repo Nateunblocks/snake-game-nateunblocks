@@ -2,54 +2,13 @@
 <html>
 
 <head>
-
-    <style type="text/css">
-        /* Area part for snake */
-        
-    </style>
-</head>
-
-<body>
-    <div class="area">
-        <!-- You can add more divs for a long snake-->
-        <div class="snake"></div>
-        <div class="snake"></div>
-        <div class="snake"></div>
-        <div class="snake"></div>
-        <div class="snake"></div>
-        <div class="snake"></div>
-        <div class="snake"></div>
-        <div class="snake"></div>
-        <div class="snake"></div>
-        <div class="snake"></div>
-    </div>
-
-    <!-- GSAP Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/gsap.min.js">
-    </script>
-
-    <!-- JavaScript Code for mouse event -->
-    <script type="text/javascript">
-        document.body.addEventListener("mousemove", e => {
-            gsap.to(".snake", {
-                x : e.clientX,
-                y : e.clientY,
-                stagger : -0.05,
-            })
-            })
-    </script>
-</body>
-
-<!DOCTYPE html>
-<html>
-
-<head>
     <style>
         .area {
             width: 100vw; /* Set the width to the full viewport width */
             height: 100vh; /* Set the height to the full viewport height */
             position: relative;
             overflow: hidden; /* Hide overflow to prevent scrollbars */
+            background: #ffffff; /* Default background color */
         }
 
         /* Designing of a part of snake (here circle) */
@@ -59,9 +18,65 @@
             left: 0;
             width: 25px;
             height: 25px;
-            background: rgb(3, 171, 15);
             border: 2px solid black;
             border-radius: 50%;
+            animation: rainbow-flash 5s infinite;
+        }
+
+        @keyframes rainbow-flash {
+            0% {
+                background: red;
+            }
+
+            10% {
+                background: orange;
+            }
+
+            20% {
+                background: yellow;
+            }
+
+            30% {
+                background: green;
+            }
+
+            40% {
+                background: blue;
+            }
+
+            50% {
+                background: indigo;
+            }
+
+            60% {
+                background: violet;
+            }
+
+            70% {
+                background: white;
+            }
+
+            80% {
+                background: black;
+            }
+
+            90% {
+                background: cyan;
+            }
+
+            100% {
+                background: magenta;
+            }
+        }
+
+        .menu-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 5px;
+            background-color: #fff;
+            border: 1px solid #000;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -81,34 +96,51 @@
         <div class="snake"></div>
     </div>
 
+    <!-- Snake Color Selector -->
+    <div id="snake-menu" class="menu-button">Snake Color</div>
+    <div id="bg-menu" class="menu-button" style="left: 100px;">Background Color</div>
+
     <!-- GSAP Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/gsap.min.js"></script>
 
-    <!-- JavaScript Code for mouse event -->
+    <!-- JavaScript Code for mouse event and color change on button click -->
     <script>
         document.body.addEventListener("mousemove", e => {
             gsap.to(".snake", {
                 x: e.clientX,
                 y: e.clientY,
-                stagger: -0.05,
+                stagger: 0.1, // Adjust the stagger for smoother animation
+                duration: 1, // Increase the duration for a smoother movement
+                ease: "power3.out" // Use ease function for smoother movement
             });
+        });
+
+        document.getElementById("snake-menu").addEventListener("click", function () {
+            var snakeElements = document.querySelectorAll(".snake");
+            var selectedColor = prompt("Enter snake color (red, orange, yellow, green, blue, purple, white, black):");
+            if (selectedColor === "rainbow") {
+                snakeElements.forEach(function (element) {
+                    element.style.animation = "rainbow-flash 5s infinite";
+                });
+            } else {
+                snakeElements.forEach(function (element) {
+                    element.style.animation = "none";
+                    element.style.background = selectedColor;
+                });
+            }
+        });
+
+        document.getElementById("bg-menu").addEventListener("click", function () {
+            var area = document.querySelector(".area");
+            var selectedColor = prompt("Enter background color (red, orange, yellow, green, blue, purple, white, black):");
+            if (selectedColor === "rainbow") {
+                area.style.animation = "rainbow-flash 5s infinite";
+            } else {
+                area.style.animation = "none";
+                area.style.background = selectedColor;
+            }
         });
     </script>
 </body>
 
 </html>
-
-    }
-    /* Designing of a part of snake (here circle) */
-     .area .snake {
-     position: absolute;
-     top: 0;
-     left: 0;
-     width: 100%;
-     height: 100%;
-     background: rgb(3, 171, 15);
-     border: 2px solid black;
-     border-radius: 50%;
-    }
-    
-</style>
