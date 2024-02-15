@@ -14,19 +14,69 @@
         /* Designing of a part of snake (here circle) */
         .area .snake {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 25px;
             height: 25px;
             border: 2px solid black;
             border-radius: 50%;
+            animation: rainbow-flash 5s infinite;
         }
 
-        .fruit {
+        @keyframes rainbow-flash {
+            0% {
+                background: red;
+            }
+
+            10% {
+                background: orange;
+            }
+
+            20% {
+                background: yellow;
+            }
+
+            30% {
+                background: green;
+            }
+
+            40% {
+                background: blue;
+            }
+
+            50% {
+                background: indigo;
+            }
+
+            60% {
+                background: violet;
+            }
+
+            70% {
+                background: white;
+            }
+
+            80% {
+                background: black;
+            }
+
+            90% {
+                background: cyan;
+            }
+
+            100% {
+                background: magenta;
+            }
+        }
+
+        .menu-button {
             position: absolute;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: red;
-            display: none; /* Initially hide the fruit */
+            top: 10px;
+            left: 10px;
+            padding: 5px;
+            background-color: #fff;
+            border: 1px solid #000;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -35,43 +85,26 @@
     <div class="area">
         <!-- You can add more divs for a long snake-->
         <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
     </div>
+
+    <!-- Snake Color Selector -->
+    <div id="snake-menu" class="menu-button">Snake Color</div>
+    <div id="bg-menu" class="menu-button" style="left: 100px;">Background Color</div>
 
     <!-- GSAP Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/gsap.min.js"></script>
 
-    <!-- JavaScript Code for mouse event, color change, and fruit handling -->
+    <!-- JavaScript Code for mouse event and color change on button click -->
     <script>
-        var snake = document.querySelector('.snake');
-        var area = document.querySelector('.area');
-        var fruits = []; // Array to store fruits
-
-        // Create three fruits
-        for (var i = 0; i < 3; i++) {
-            var fruit = document.createElement('div');
-            fruit.classList.add('fruit');
-            area.appendChild(fruit);
-            fruits.push(fruit);
-        }
-
-        var snakeLength = 1; // Initial length of the snake
-
-        // Function to place a fruit at a random location
-        function placeFruit(fruit) {
-            var maxX = area.clientWidth - fruit.clientWidth;
-            var maxY = area.clientHeight - fruit.clientHeight;
-            var newX = Math.floor(Math.random() * maxX);
-            var newY = Math.floor(Math.random() * maxY);
-            fruit.style.left = newX + 'px';
-            fruit.style.top = newY + 'px';
-            fruit.style.display = 'block'; // Show the fruit
-        }
-
-        // Initial placement of all fruits
-        fruits.forEach(function (fruit) {
-            placeFruit(fruit);
-        });
-
         document.body.addEventListener("mousemove", e => {
             gsap.to(".snake", {
                 x: e.clientX,
@@ -82,83 +115,31 @@
             });
         });
 
-        document.addEventListener("keydown", function (event) {
-            if (event.key === 'h') {
-                changeSnakeColor();
-            }
-            if (event.key === 'j') {
-                changeBackgroundColor();
+        document.getElementById("snake-menu").addEventListener("click", function () {
+            var snakeElements = document.querySelectorAll(".snake");
+            var selectedColor = prompt("Enter snake color (red, orange, yellow, green, blue, purple, white, black):");
+            if (selectedColor === "rainbow") {
+                snakeElements.forEach(function (element) {
+                    element.style.animation = "rainbow-flash 5s infinite";
+                });
+            } else {
+                snakeElements.forEach(function (element) {
+                    element.style.animation = "none";
+                    element.style.background = selectedColor;
+                });
             }
         });
 
-        // Function to change snake color randomly
-        function changeSnakeColor() {
-            var snakeElements = document.querySelectorAll(".snake");
-            var colorChoices = ["red", "orange", "yellow", "green", "blue", "purple", "white", "black"];
-            var randomColor = colorChoices[Math.floor(Math.random() * colorChoices.length)];
-            snakeElements.forEach(function (element) {
-                element.style.background = randomColor;
-            });
-        }
-
-        // Function to change background color randomly
-        function changeBackgroundColor() {
+        document.getElementById("bg-menu").addEventListener("click", function () {
             var area = document.querySelector(".area");
-            var colorChoices = ["red", "orange", "yellow", "green", "blue", "purple", "white", "black"];
-            var randomColor = colorChoices[Math.floor(Math.random() * colorChoices.length)];
-            area.style.background = randomColor;
-        }
-
-        // Function to handle eating the fruit
-        function eatFruit(fruit) {
-            fruit.style.display = 'none'; // Hide the fruit
-            placeFruit(fruit); // Place a new fruit
-        }
-
-        // Check for collision between snake and fruit
-        function checkCollision() {
-            var snakeRect = snake.getBoundingClientRect();
-            var fruitRects = fruits.map(function (fruit) {
-                return fruit.getBoundingClientRect();
-            });
-            return fruitRects.some(function (fruitRect) {
-                return !(
-                    snakeRect.right < fruitRect.left ||
-                    snakeRect.left > fruitRect.right ||
-                    snakeRect.bottom < fruitRect.top ||
-                    snakeRect.top > fruitRect.bottom
-                );
-            });
-        }
-
-        // Function to handle snake movement
-        function moveSnake() {
-            var direction = Math.floor(Math.random() * 4); // Randomly choose direction
-            var step = 30; // Step size for movement
-            switch (direction) {
-                case 0: // Up
-                    snake.style.top = Math.max(0, parseFloat(snake.style.top) - step) + 'px';
-                    break;
-                case 1: // Right
-                    snake.style.left = Math.min(area.clientWidth - snake.clientWidth, parseFloat(snake.style.left) + step) + 'px';
-                    break;
-                case 2: // Down
-                    snake.style.top = Math.min(area.clientHeight - snake.clientHeight, parseFloat(snake.style.top) + step) + 'px';
-                    break;
-                case 3: // Left
-                    snake.style.left = Math.max(0, parseFloat(snake.style.left) - step) + 'px';
-                    break;
+            var selectedColor = prompt("Enter background color (red, orange, yellow, green, blue, purple, white, black):");
+            if (selectedColor === "rainbow") {
+                area.style.animation = "rainbow-flash 5s infinite";
+            } else {
+                area.style.animation = "none";
+                area.style.background = selectedColor;
             }
-            // Check if snake eats any fruit
-            fruits.forEach(function (fruit) {
-                if (checkCollision()) {
-                    eatFruit(fruit);
-                }
-            });
-        }
-
-        // Start snake movement
-        setInterval(moveSnake, 1000); // Move snake every 1 second
+        });
     </script>
 </body>
 
