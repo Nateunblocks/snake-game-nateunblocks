@@ -201,7 +201,11 @@
         window.onload = function () {
             var loadingScreen = document.querySelector('.loading-screen');
             var gameArea = document.querySelector('.area');
-            setTimeout(function () {
-                loadingScreen.style.display = 'none';
-                gameArea.style.display = 'block'; // Show the game area
-                setInterval(moveSnake, 1000); //
+            loadingScreen.style.display = 'none';
+            gameArea.style.display = 'block'; // Show the game area
+            setInterval(moveSnake, 1000); // Move snake every 1 second
+        };
+    </script>
+</body>
+
+</html>
