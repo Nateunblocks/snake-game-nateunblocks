@@ -3,47 +3,12 @@
 
 <head>
     <style>
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            color: #fff;
-            font-size: 24px;
-        }
-
-        .loading-circle {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            border-top: 2px solid transparent;
-            animation: spin 2s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
         .area {
             width: 100vw; /* Set the width to the full viewport width */
             height: 100vh; /* Set the height to the full viewport height */
             position: relative;
             overflow: hidden; /* Hide overflow to prevent scrollbars */
             background: #ffffff; /* Default background color */
-            display: none; /* Initially hide the game area */
         }
 
         /* Designing of a part of snake (here circle) */
@@ -54,15 +19,19 @@
             border: 2px solid black;
             border-radius: 50%;
         }
+
+        .fruit {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: red;
+            display: none; /* Initially hide the fruit */
+        }
     </style>
 </head>
 
 <body>
-    <div class="loading-screen">
-        <div class="loading-circle"></div>
-        <span>Loading...</span>
-    </div>
-
     <div class="area">
         <!-- You can add more divs for a long snake-->
         <div class="snake"></div>
@@ -71,10 +40,37 @@
     <!-- GSAP Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/gsap.min.js"></script>
 
-    <!-- JavaScript Code for mouse event, color change -->
+    <!-- JavaScript Code for mouse event, color change, and fruit handling -->
     <script>
         var snake = document.querySelector('.snake');
         var area = document.querySelector('.area');
+        var fruits = []; // Array to store fruits
+
+        // Create three fruits
+        for (var i = 0; i < 3; i++) {
+            var fruit = document.createElement('div');
+            fruit.classList.add('fruit');
+            area.appendChild(fruit);
+            fruits.push(fruit);
+        }
+
+        var snakeLength = 1; // Initial length of the snake
+
+        // Function to place a fruit at a random location
+        function placeFruit(fruit) {
+            var maxX = area.clientWidth - fruit.clientWidth;
+            var maxY = area.clientHeight - fruit.clientHeight;
+            var newX = Math.floor(Math.random() * maxX);
+            var newY = Math.floor(Math.random() * maxY);
+            fruit.style.left = newX + 'px';
+            fruit.style.top = newY + 'px';
+            fruit.style.display = 'block'; // Show the fruit
+        }
+
+        // Initial placement of all fruits
+        fruits.forEach(function (fruit) {
+            placeFruit(fruit);
+        });
 
         document.body.addEventListener("mousemove", e => {
             gsap.to(".snake", {
@@ -113,15 +109,28 @@
             area.style.background = randomColor;
         }
 
-        // Start snake movement after loading
-        window.onload = function () {
-            var loadingScreen = document.querySelector('.loading-screen');
-            var gameArea = document.querySelector('.area');
-            loadingScreen.style.display = 'none';
-            gameArea.style.display = 'block'; // Show the game area
-            setInterval(moveSnake, 1000); // Move snake every 1 second
-        };
-        
+        // Function to handle eating the fruit
+        function eatFruit(fruit) {
+            fruit.style.display = 'none'; // Hide the fruit
+            placeFruit(fruit); // Place a new fruit
+        }
+
+        // Check for collision between snake and fruit
+        function checkCollision() {
+            var snakeRect = snake.getBoundingClientRect();
+            var fruitRects = fruits.map(function (fruit) {
+                return fruit.getBoundingClientRect();
+            });
+            return fruitRects.some(function (fruitRect) {
+                return !(
+                    snakeRect.right < fruitRect.left ||
+                    snakeRect.left > fruitRect.right ||
+                    snakeRect.bottom < fruitRect.top ||
+                    snakeRect.top > fruitRect.bottom
+                );
+            });
+        }
+
         // Function to handle snake movement
         function moveSnake() {
             var direction = Math.floor(Math.random() * 4); // Randomly choose direction
@@ -140,7 +149,16 @@
                     snake.style.left = Math.max(0, parseFloat(snake.style.left) - step) + 'px';
                     break;
             }
+            // Check if snake eats any fruit
+            fruits.forEach(function (fruit) {
+                if (checkCollision()) {
+                    eatFruit(fruit);
+                }
+            });
         }
+
+        // Start snake movement
+        setInterval(moveSnake, 1000); // Move snake every 1 second
     </script>
 </body>
 
